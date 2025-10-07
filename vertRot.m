@@ -1,0 +1,15 @@
+ function [vertex,theta, a] = vertRot(x,y)
+    xy=[x(:),y(:)].';
+    theta= fminsearch(@(theta) cost(theta,xy), 45);    
+    [~,coeffs]=cost(theta,xy);
+    [a,b,c]=deal(coeffs(1),coeffs(2), coeffs(3));
+        xv=-b/2/a;
+     vertex=R(-theta)*[xv;polyval(coeffs,xv)];
+ function [Cost,coeffs,xx,yy] = cost(theta,xy)
+    Rxy=R(theta)*xy;
+    [xx,idx]=sort(Rxy(1,:));
+    yy=Rxy(2,idx);
+    [coeffs,S]=polyfit(xx,yy,2);
+    Cost=S.normr;
+ function Rmat=R(theta)
+     Rmat=[cosd(theta), -sind(theta); sind(theta), cosd(theta)];
